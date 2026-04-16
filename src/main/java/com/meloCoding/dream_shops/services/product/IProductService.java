@@ -3,9 +3,10 @@ package com.meloCoding.dream_shops.services.product;
 import java.util.List;
 
 import com.meloCoding.dream_shops.models.Product;
+import com.meloCoding.dream_shops.request.AddProductRequest;
 
 public interface IProductService {
-    Product addProduct(Product product);
+    Product addProduct(AddProductRequest request);
 
     void updateProduct(Product product, Long productId);
 

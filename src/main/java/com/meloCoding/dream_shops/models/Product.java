@@ -16,6 +16,16 @@ import java.util.List;
 @Entity
 @Data
 public class Product {
+    public Product(String name2, String brand2, BigDecimal price2, int inventory2, String description2,
+            Category category2) {
+        name = name2;
+        brand = brand2;
+        price = price2;
+        inventory = inventory2;
+        description = description2;
+        category = category2;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,4 +41,5 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images;
+
 }
