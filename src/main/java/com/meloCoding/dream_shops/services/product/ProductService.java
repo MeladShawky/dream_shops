@@ -10,6 +10,7 @@ import com.meloCoding.dream_shops.exceptions.ProductNotFoundExcpation;
 import com.meloCoding.dream_shops.models.Category;
 import com.meloCoding.dream_shops.models.Product;
 import com.meloCoding.dream_shops.request.AddProductRequest;
+import com.meloCoding.dream_shops.request.ProductUpdateRequest;
 import com.meloCoding.dream_shops.services.repository.categoryRepository;
 import com.meloCoding.dream_shops.services.repository.productRepository;
 
@@ -48,15 +49,23 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public void updateProduct(Product product, Long productId) {
-        Product existingProduct = getProductById(productId);
-        existingProduct.setName(product.getName());
-        existingProduct.setBrand(product.getBrand());
-        existingProduct.setPrice(product.getPrice());
-        existingProduct.setInventory(product.getInventory());
-        existingProduct.setDescription(product.getDescription());
-        existingProduct.setCategory(product.getCategory());
-        productRepository.save(existingProduct);
+    public Product updateProduct(ProductUpdateRequest request, Long productId) {
+        return productRepository.findById(productId)
+                .map(existingProduct -> updateExistingProduct(existingProduct, request))
+                .map(productRepository::save)
+                .orElseThrow(() -> new ProductNotFoundExcpation("Product not found!"));
+    }
+
+    private Product updateExistingProduct(Product existingProduct, ProductUpdateRequest request) {
+        existingProduct.setName(request.getName());
+        existingProduct.setBrand(request.getBrand());
+        existingProduct.setPrice(request.getPrice());
+        existingProduct.setInventory(request.getInventory());
+        existingProduct.setDescription(request.getDescription());
+
+        Category category = categoryRepository.findByName(request.getCategory().getName());
+        existingProduct.setCategory(category);
+        return existingProduct;
     }
 
     @Override

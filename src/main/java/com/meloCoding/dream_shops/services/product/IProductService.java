@@ -4,11 +4,12 @@ import java.util.List;
 
 import com.meloCoding.dream_shops.models.Product;
 import com.meloCoding.dream_shops.request.AddProductRequest;
+import com.meloCoding.dream_shops.request.ProductUpdateRequest;
 
 public interface IProductService {
     Product addProduct(AddProductRequest request);
 
-    void updateProduct(Product product, Long productId);
+    Product updateProduct(ProductUpdateRequest request, Long productId);
 
     void deleteProduct(Long productId);
 
