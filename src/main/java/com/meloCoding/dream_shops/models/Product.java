@@ -9,12 +9,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class Product {
     public Product(String name2, String brand2, BigDecimal price2, int inventory2, String description2,
             Category category2) {
