@@ -11,7 +11,7 @@ import com.meloCoding.dream_shops.models.Category;
 import com.meloCoding.dream_shops.models.Product;
 import com.meloCoding.dream_shops.request.AddProductRequest;
 import com.meloCoding.dream_shops.request.ProductUpdateRequest;
-import com.meloCoding.dream_shops.services.repository.categoryRepository;
+import com.meloCoding.dream_shops.services.repository.CategoryRepository;
 import com.meloCoding.dream_shops.services.repository.productRepository;
 
 @Service
@@ -21,7 +21,7 @@ public class ProductService implements IProductService {
     private productRepository productRepository;
 
     @Autowired
-    private categoryRepository categoryRepository;
+    private CategoryRepository categoryRepository;
 
     @Override
     public Product addProduct(AddProductRequest request) {
@@ -71,7 +71,7 @@ public class ProductService implements IProductService {
     @Override
     public void deleteProduct(Long productId) {
         Product product = productRepository.findById(productId)
-            .orElseThrow(() -> new ProductNotFoundExcpation("Product not found!"));
+                .orElseThrow(() -> new ProductNotFoundExcpation("Product not found!"));
         productRepository.delete(product);
     }
 
