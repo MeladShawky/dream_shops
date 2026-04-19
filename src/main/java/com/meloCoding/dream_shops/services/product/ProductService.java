@@ -3,9 +3,11 @@ package com.meloCoding.dream_shops.services.product;
 import java.util.List;
 import java.util.Optional;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.meloCoding.dream_shops.dto.ProductDto;
 import com.meloCoding.dream_shops.exceptions.ProductNotFoundExcpation;
 import com.meloCoding.dream_shops.models.Category;
 import com.meloCoding.dream_shops.models.Product;
@@ -22,6 +24,9 @@ public class ProductService implements IProductService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Override
     public Product addProduct(AddProductRequest request) {
@@ -119,6 +124,10 @@ public class ProductService implements IProductService {
     @Override
     public Long countProducts() {
         return productRepository.count();
+    }
+
+    public ProductDto convertToDto(Product product) {
+        return modelMapper.map(product, ProductDto.class);
     }
 
 }

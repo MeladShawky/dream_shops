@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.meloCoding.dream_shops.dto.ProductDto;
 import com.meloCoding.dream_shops.exceptions.ProductNotFoundExcpation;
 import com.meloCoding.dream_shops.exceptions.ResourceNotFoundException;
 import com.meloCoding.dream_shops.models.Product;
