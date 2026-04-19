@@ -11,6 +11,7 @@ import lombok.Data;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Data
@@ -22,7 +23,6 @@ public class Category {
     private String name;
 
     @OneToMany(mappedBy = "category")
-    @JsonBackReference
     private List<Product> products;
 
     public Category(String name) {
