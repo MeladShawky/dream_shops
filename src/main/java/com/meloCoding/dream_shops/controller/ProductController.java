@@ -29,12 +29,15 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("${api.prefix}/products")
 public class ProductController {
 
+    Long count;
+
     private final IProductService productService;
 
     @GetMapping("/all")
     public ResponseEntity<ApiResponse> getAllProducts() {
+        count = productService.countProducts();
         List<Product> products = productService.getAllProducts();
-        return ResponseEntity.ok(new ApiResponse("Products fetched successfully", products));
+        return ResponseEntity.ok(new ApiResponse("Products fetched successfully" + count, products));
     }
 
     @GetMapping("/product/{productId}/product")
@@ -157,7 +160,7 @@ public class ProductController {
             @RequestParam String brand,
             @RequestParam String name) {
         try {
-            Long count = productService.countProductsByBrandAndName(brand, name);
+            count = productService.countProductsByBrandAndName(brand, name);
             if (brand.isEmpty() || name.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(new ApiResponse("Brand and name cannot be empty", null));

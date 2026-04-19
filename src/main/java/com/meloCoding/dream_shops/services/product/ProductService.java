@@ -116,4 +116,9 @@ public class ProductService implements IProductService {
         return productRepository.countByBrandAndName(brand, name);
     }
 
+    @Override
+    public Long countProducts() {
+        return productRepository.count();
+    }
+
 }

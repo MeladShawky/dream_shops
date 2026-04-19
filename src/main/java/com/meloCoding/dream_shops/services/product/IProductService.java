@@ -29,4 +29,6 @@ public interface IProductService {
 
     Long countProductsByBrandAndName(String brand, String name);
 
+    Long countProducts();
+
 }
