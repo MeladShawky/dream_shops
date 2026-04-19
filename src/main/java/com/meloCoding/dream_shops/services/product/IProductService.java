@@ -2,6 +2,7 @@ package com.meloCoding.dream_shops.services.product;
 
 import java.util.List;
 
+import com.meloCoding.dream_shops.dto.ProductDto;
 import com.meloCoding.dream_shops.models.Product;
 import com.meloCoding.dream_shops.request.AddProductRequest;
 import com.meloCoding.dream_shops.request.ProductUpdateRequest;
@@ -30,5 +31,7 @@ public interface IProductService {
     Long countProductsByBrandAndName(String brand, String name);
 
     Long countProducts();
+
+    ProductDto convertToDto(Product product);
 
 }

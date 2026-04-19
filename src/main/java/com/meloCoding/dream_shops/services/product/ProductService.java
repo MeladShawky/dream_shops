@@ -6,14 +6,16 @@ import java.util.Optional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.meloCoding.dream_shops.dto.ImageDto;
 import com.meloCoding.dream_shops.dto.ProductDto;
 import com.meloCoding.dream_shops.exceptions.ProductNotFoundExcpation;
 import com.meloCoding.dream_shops.models.Category;
+import com.meloCoding.dream_shops.models.Image;
 import com.meloCoding.dream_shops.models.Product;
 import com.meloCoding.dream_shops.request.AddProductRequest;
 import com.meloCoding.dream_shops.request.ProductUpdateRequest;
 import com.meloCoding.dream_shops.services.repository.CategoryRepository;
+import com.meloCoding.dream_shops.services.repository.ImageRepository;
 import com.meloCoding.dream_shops.services.repository.productRepository;
 
 @Service
@@ -21,6 +23,9 @@ public class ProductService implements IProductService {
 
     @Autowired
     private productRepository productRepository;
+
+    @Autowired
+    private ImageRepository imageRepository;
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -126,8 +131,13 @@ public class ProductService implements IProductService {
         return productRepository.count();
     }
 
+    @Override
     public ProductDto convertToDto(Product product) {
-        return modelMapper.map(product, ProductDto.class);
+        ProductDto productDto = modelMapper.map(product, ProductDto.class);
+        List<Image> images = imageRepository.findByProductId(product.getId());
+       List<ImageDto> imageDtos = images.stream().map(image -> modelMapper.map(image, ImageDto.class)).toList();
+       productDto.setImages(imageDtos);
+       return productDto;
     }
 
 }

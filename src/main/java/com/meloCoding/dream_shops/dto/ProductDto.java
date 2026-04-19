@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.meloCoding.dream_shops.models.Category;
-import com.meloCoding.dream_shops.models.Image;
 
+import lombok.Data;
+
+@Data
 public class ProductDto {
     private Long id;
     private String name;
