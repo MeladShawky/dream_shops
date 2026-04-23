@@ -15,6 +15,7 @@ import com.meloCoding.dream_shops.response.ApiResponse;
 import com.meloCoding.dream_shops.services.Cart.ICartItemService;
 import com.meloCoding.dream_shops.services.Cart.ICartService;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -25,7 +26,8 @@ public class CartItemController {
     private final ICartService cartService;
 
     @PostMapping("/item/add")
-    public ResponseEntity<ApiResponse> addItemToCart(@RequestParam Long cartId,
+    @Transactional
+    public ResponseEntity<ApiResponse> addItemToCart(@RequestParam(required = false) Long cartId,
             @RequestParam Long productId,
             @RequestParam int quantity) {
         try {

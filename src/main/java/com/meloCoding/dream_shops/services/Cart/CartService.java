@@ -44,12 +44,14 @@ public class CartService implements ICartService {
         Cart cart = getCart(id);
         return cart.getTotalAmount();
     }
-
-    public Long initializeCart() {
-        Cart cart = new Cart();
-        Long newCartId = cartId.incrementAndGet();
-        cart.setId(newCartId);
-        cart.setTotalAmount(BigDecimal.ZERO);
-        return cartRepository.save(cart).getId();
-    }
+@Transactional
+public Long initializeCart() {
+    Cart cart = new Cart();
+    // مش محتاج تسيت الـ ID يدوي خالص هنا
+    cart.setTotalAmount(BigDecimal.ZERO);
+    
+    // Hibernate هيعرف إن ده Entity جديد وهيضيفه ويجيب الـ ID اللي اتولد
+    Cart savedCart = cartRepository.save(cart);
+    return savedCart.getId();
+}
 }
