@@ -38,14 +38,16 @@ public class ProductController {
     public ResponseEntity<ApiResponse> getAllProducts() {
         count = productService.countProducts();
         List<Product> products = productService.getAllProducts();
-        return ResponseEntity.ok(new ApiResponse("Products fetched successfully" + count, products));
+        List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
+        return ResponseEntity.ok(new ApiResponse("Products fetched successfully" + count, convertedProducts));
     }
 
     @GetMapping("/product/{productId}/product")
     public ResponseEntity<ApiResponse> getProductById(@PathVariable Long productId) {
         try {
             Product product = productService.getProductById(productId);
-            return ResponseEntity.ok(new ApiResponse("Product fetched successfully", product));
+            ProductDto convertedProduct = productService.convertToDto(product);
+            return ResponseEntity.ok(new ApiResponse("Product fetched successfully", convertedProduct));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
@@ -55,7 +57,8 @@ public class ProductController {
     public ResponseEntity<ApiResponse> addProduct(@RequestBody AddProductRequest product) {
         try {
             Product addedProduct = productService.addProduct(product);
-            return ResponseEntity.ok(new ApiResponse("Product added successfully", addedProduct));
+            ProductDto convertedProduct = productService.convertToDto(addedProduct);
+            return ResponseEntity.ok(new ApiResponse("Product added successfully", convertedProduct));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
         }
@@ -67,7 +70,8 @@ public class ProductController {
             @PathVariable Long productId) {
         try {
             Product updatedProduct = productService.updateProduct(request, productId);
-            return ResponseEntity.ok(new ApiResponse("Product updated successfully", updatedProduct));
+            ProductDto convertedProduct = productService.convertToDto(updatedProduct);
+            return ResponseEntity.ok(new ApiResponse("Product updated successfully", convertedProduct));
         } catch (ProductNotFoundExcpation e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
@@ -92,7 +96,8 @@ public class ProductController {
             if (products.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("No products found", null));
             }
-            return ResponseEntity.ok(new ApiResponse("Products fetched successfully", products));
+            List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
+            return ResponseEntity.ok(new ApiResponse("Products fetched successfully", convertedProducts));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
         }
@@ -107,7 +112,8 @@ public class ProductController {
             if (products.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("No products found", null));
             }
-            return ResponseEntity.ok(new ApiResponse("Products fetched successfully", products));
+            List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
+            return ResponseEntity.ok(new ApiResponse("Products fetched successfully", convertedProducts));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
         }
@@ -122,7 +128,8 @@ public class ProductController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(new ApiResponse("Name cannot be empty", null));
             }
-            return ResponseEntity.ok(new ApiResponse("Products fetched successfully", products));
+            List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
+            return ResponseEntity.ok(new ApiResponse("Products fetched successfully", convertedProducts));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
         }
@@ -136,7 +143,8 @@ public class ProductController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(new ApiResponse("Brand cannot be empty", null));
             }
-            return ResponseEntity.ok(new ApiResponse("Products fetched successfully", products));
+            List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
+            return ResponseEntity.ok(new ApiResponse("Products fetched successfully", convertedProducts));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
         }
@@ -150,11 +158,13 @@ public class ProductController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(new ApiResponse("Category cannot be empty", null));
             }
-            return ResponseEntity.ok(new ApiResponse("Products fetched successfully", products));
+            List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
+            return ResponseEntity.ok(new ApiResponse("Products fetched successfully", convertedProducts));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
         }
     }
+
 
     @GetMapping("/count/by-brand/and-name")
     public ResponseEntity<ApiResponse> countProductsByBrandAndName(

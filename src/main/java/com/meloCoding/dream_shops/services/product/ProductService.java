@@ -18,20 +18,21 @@ import com.meloCoding.dream_shops.services.repository.CategoryRepository;
 import com.meloCoding.dream_shops.services.repository.ImageRepository;
 import com.meloCoding.dream_shops.services.repository.productRepository;
 
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
+@Data
 public class ProductService implements IProductService {
 
-    @Autowired
-    private productRepository productRepository;
+    private final productRepository productRepository;
 
-    @Autowired
-    private ImageRepository imageRepository;
+    private final ImageRepository imageRepository;
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     @Override
     public Product addProduct(AddProductRequest request) {
@@ -129,6 +130,11 @@ public class ProductService implements IProductService {
     @Override
     public Long countProducts() {
         return productRepository.count();
+    }
+
+    @Override
+    public List<ProductDto> getConvertedProducts(List<Product> products) {
+        return products.stream().map(this::convertToDto).toList();
     }
 
     @Override
