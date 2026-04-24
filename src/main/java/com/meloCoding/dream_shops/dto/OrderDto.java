@@ -4,9 +4,10 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import lombok.Data;
-
-@Data
+import lombok.Getter;
+import lombok.Setter;
+@Getter
+@Setter
 public class OrderDto {
     private Long orderId;
     private LocalDate orderDate;

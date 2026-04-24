@@ -3,8 +3,10 @@ package com.meloCoding.dream_shops.dto;
 import java.math.BigDecimal;
 
 import lombok.Data;
-
-@Data
+import lombok.Getter;
+import lombok.Setter;
+@Getter
+@Setter
 public class OrderItemDto {
     private Long productId;
     private String productName;
