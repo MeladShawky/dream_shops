@@ -30,7 +30,7 @@ public class OrderService implements IOrderService {
     @Transactional
     @Override
     public Order placeOrder(Long userId) {
-        Cart cart = cartService.getCart(userId);
+        Cart cart = cartService.getCartByUserId(userId);
 
         Order order = createOrder(cart);
         List<OrderItem> orderItems = createOrderItems(order, cart);
@@ -46,6 +46,7 @@ public class OrderService implements IOrderService {
 
     private Order createOrder(Cart cart) {
         Order order = new Order();
+        order.setUser(cart.getUser());
         order.setOrderDate(LocalDate.now());
         order.setOrderStatus(OrderStatus.PENDING);
         return order;
@@ -75,6 +76,14 @@ public class OrderService implements IOrderService {
         return orderRepository.findById(orderId)
                 .map(this::convertToDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+    }
+
+    @Override
+    public List<OrderDto> getUserOrders(Long userId) {
+        return orderRepository.findByUserId(userId)
+                .stream()
+                .map(this::convertToDto)
+                .toList();
     }
 
     private OrderDto convertToDto(Order order) {

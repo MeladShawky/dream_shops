@@ -6,4 +6,5 @@ import com.meloCoding.dream_shops.models.Cart;
 
 public interface CartRepository extends JpaRepository<Cart, Long> {
 
+    Cart findByUserId(Long userId);
 }

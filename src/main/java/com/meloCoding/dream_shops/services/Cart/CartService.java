@@ -54,4 +54,10 @@ public Long initializeCart() {
     Cart savedCart = cartRepository.save(cart);
     return savedCart.getId();
 }
+
+@Override
+public Cart getCartByUserId(Long userId) {
+   return cartRepository.findByUserId(userId);
+}
+
 }
