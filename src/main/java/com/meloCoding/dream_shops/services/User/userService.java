@@ -2,8 +2,10 @@ package com.meloCoding.dream_shops.services.User;
 
 import java.util.Optional;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import com.meloCoding.dream_shops.dto.UserDto;
 import com.meloCoding.dream_shops.exceptions.AlreadyExistsException;
 import com.meloCoding.dream_shops.exceptions.ResourceNotFoundException;
 import com.meloCoding.dream_shops.models.User;
@@ -17,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class userService implements IUserService {
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public User getUserById(Long userId) {
@@ -56,5 +59,10 @@ public class userService implements IUserService {
                 .ifPresentOrElse(userRepository::delete, () -> {
                     throw new ResourceNotFoundException("User not found!");
                 });
+    }
+
+    @Override
+    public UserDto convertUserToDto(User user) {
+        return modelMapper.map(user, UserDto.class);
     }
 }
