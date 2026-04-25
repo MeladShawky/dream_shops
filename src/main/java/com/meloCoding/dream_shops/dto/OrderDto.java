@@ -10,6 +10,7 @@ import lombok.Setter;
 @Setter
 public class OrderDto {
     private Long orderId;
+    private Long userId;
     private LocalDate orderDate;
     private BigDecimal totalAmount;
     private String status;

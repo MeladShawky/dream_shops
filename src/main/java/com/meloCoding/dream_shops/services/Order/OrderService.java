@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class OrderService implements IOrderService {
     private final OrderRepository orderRepository;
     private final ICartService cartService;
+    private final ModelMapper modelMapper;
 
     @Transactional
     @Override
@@ -39,7 +41,7 @@ public class OrderService implements IOrderService {
 
         Order savedOrder = orderRepository.save(order);
 
-        cartService.clearCart(userId);
+        cartService.clearCart(cart.getId());
 
         return savedOrder;
     }
@@ -86,27 +88,13 @@ public class OrderService implements IOrderService {
                 .toList();
     }
 
-    private OrderDto convertToDto(Order order) {
-        OrderDto dto = new OrderDto();
-        dto.setOrderId(order.getOrderId());
-        dto.setOrderDate(order.getOrderDate());
-        dto.setTotalAmount(order.getTotalAmount());
-        dto.setStatus(order.getOrderStatus().name());
-        dto.setItems(order.getOrderItems()
-                .stream()
-                .map(this::convertItemToDto)
-                .toList());
-        return dto;
+    @Override
+    public OrderDto convertToDto(Order order) {
+        return modelMapper.map(order, OrderDto.class);
     }
 
-    private OrderItemDto convertItemToDto(OrderItem item) {
-        OrderItemDto dto = new OrderItemDto();
-        Product product = item.getProduct();
-        dto.setProductId(product.getId());
-        dto.setProductName(product.getName());
-        dto.setProductBrand(product.getBrand());
-        dto.setQuantity(item.getQuantity());
-        dto.setPrice(item.getPrice());
-        return dto;
+    @Override
+    public OrderItemDto convertItemToDto(OrderItem item) {
+        return modelMapper.map(item, OrderItemDto.class);
     }
 }
