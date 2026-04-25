@@ -1,6 +1,7 @@
 package com.meloCoding.dream_shops.services.Cart;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.meloCoding.dream_shops.exceptions.ResourceNotFoundException;
 import com.meloCoding.dream_shops.models.Cart;
+import com.meloCoding.dream_shops.models.User;
 import com.meloCoding.dream_shops.services.repository.CartItemRepository;
 import com.meloCoding.dream_shops.services.repository.CartRepository;
 
@@ -18,8 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class CartService implements ICartService {
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
-    private final AtomicLong cartId = new AtomicLong(0);
-
+    
     @Override
     public Cart getCart(Long id) {
         Cart cart = cartRepository.findById(id)
@@ -45,14 +46,14 @@ public class CartService implements ICartService {
         return cart.getTotalAmount();
     }
 @Transactional
-public Long initializeCart() {
-    Cart cart = new Cart();
-    // مش محتاج تسيت الـ ID يدوي خالص هنا
-    cart.setTotalAmount(BigDecimal.ZERO);
-    
-    // Hibernate هيعرف إن ده Entity جديد وهيضيفه ويجيب الـ ID اللي اتولد
-    Cart savedCart = cartRepository.save(cart);
-    return savedCart.getId();
+public Cart initializeCart(User user) {
+    return Optional.ofNullable(getCartByUserId(user.getId()))
+    .orElseGet(()->{
+        Cart cart=new Cart();
+        cart.setUser(user);
+        cart.setTotalAmount(BigDecimal.ZERO);
+        return cartRepository.save(cart);
+    });
 }
 
 @Override

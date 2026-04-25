@@ -11,9 +11,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.meloCoding.dream_shops.exceptions.ResourceNotFoundException;
+import com.meloCoding.dream_shops.models.Cart;
+import com.meloCoding.dream_shops.models.User;
 import com.meloCoding.dream_shops.response.ApiResponse;
 import com.meloCoding.dream_shops.services.Cart.ICartItemService;
 import com.meloCoding.dream_shops.services.Cart.ICartService;
+import com.meloCoding.dream_shops.services.User.userService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,17 +27,17 @@ import lombok.RequiredArgsConstructor;
 public class CartItemController {
     private final ICartItemService cartItemService;
     private final ICartService cartService;
+    private final userService userService;
 
     @PostMapping("/item/add")
     @Transactional
-    public ResponseEntity<ApiResponse> addItemToCart(@RequestParam(required = false) Long cartId,
+    public ResponseEntity<ApiResponse> addItemToCart(
             @RequestParam Long productId,
             @RequestParam int quantity) {
         try {
-            if (cartId == null) {
-                cartId = cartService.initializeCart();
-            }
-            cartItemService.addItemToCart(cartId, productId, quantity);
+            User user = userService.getUserById(1L);
+            Cart cart = cartService.initializeCart(user);
+            cartItemService.addItemToCart(cart.getId(), productId, quantity);
             return ResponseEntity.ok(new ApiResponse("Add Item Success", null));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
