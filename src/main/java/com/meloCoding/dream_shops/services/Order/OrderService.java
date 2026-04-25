@@ -19,6 +19,7 @@ import com.meloCoding.dream_shops.models.OrderItem;
 import com.meloCoding.dream_shops.models.Product;
 import com.meloCoding.dream_shops.services.Cart.ICartService;
 import com.meloCoding.dream_shops.services.repository.OrderRepository;
+import com.meloCoding.dream_shops.services.repository.productRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,6 +29,7 @@ public class OrderService implements IOrderService {
     private final OrderRepository orderRepository;
     private final ICartService cartService;
     private final ModelMapper modelMapper;
+    private final productRepository productRepository;
 
     @Transactional
     @Override
@@ -38,6 +40,17 @@ public class OrderService implements IOrderService {
         List<OrderItem> orderItems = createOrderItems(order, cart);
         order.setOrderItems(new HashSet<>(orderItems));
         order.setTotalAmount(calculateTotalAmount(orderItems));
+
+        // Decrease inventory for each ordered product
+        for (OrderItem item : orderItems) {
+            Product product = item.getProduct();
+            int newInventory = product.getInventory() - item.getQuantity();
+            if (newInventory < 0) {
+                throw new RuntimeException("Insufficient stock for product: " + product.getName());
+            }
+            product.setInventory(newInventory);
+            productRepository.save(product);
+        }
 
         Order savedOrder = orderRepository.save(order);
 

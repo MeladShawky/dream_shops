@@ -46,6 +46,14 @@ public class ProductService implements IProductService {
                     return categoryRepository.save(newCategory);
                 });
         request.setCategory(category);
+
+        // If a product with the same name and brand already exists, increase its inventory
+        if (productRepository.existsByNameAndBrand(request.getName(), request.getBrand())) {
+            Product existingProduct = productRepository.findByNameAndBrand(request.getName(), request.getBrand());
+            existingProduct.setInventory(existingProduct.getInventory() + request.getInventory());
+            return productRepository.save(existingProduct);
+        }
+
         return productRepository.save(createProduct(request, category));
     }
 
