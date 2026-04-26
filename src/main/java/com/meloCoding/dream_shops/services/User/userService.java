@@ -2,7 +2,9 @@ package com.meloCoding.dream_shops.services.User;
 
 import java.util.Optional;
 
+import org.springframework.security.core.Authentication;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,7 @@ import com.meloCoding.dream_shops.models.Role;
 import com.meloCoding.dream_shops.models.User;
 import com.meloCoding.dream_shops.request.CreateUserRequest;
 import com.meloCoding.dream_shops.request.UpdateUserRequest;
+import com.meloCoding.dream_shops.security.user.ShopUserDetails;
 import com.meloCoding.dream_shops.services.repository.RoleRepository;
 import com.meloCoding.dream_shops.services.repository.UserRepository;
 
@@ -75,5 +78,14 @@ public class userService implements IUserService {
     @Override
     public UserDto convertUserToDto(User user) {
         return modelMapper.map(user, UserDto.class);
+    }
+
+    @Override
+    public User getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated())
+            throw new ResourceNotFoundException("User not found!");
+        ShopUserDetails userDetails = (ShopUserDetails) authentication.getPrincipal();
+        return userRepository.findByEmail(userDetails.getUsername()).orElseThrow();
     }
 }

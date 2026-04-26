@@ -7,6 +7,7 @@ import com.meloCoding.dream_shops.request.UpdateUserRequest;
 
 public interface IUserService {
     User getUserById(Long userId);
+    User getAuthenticatedUser();
     User createUser(CreateUserRequest request);
     User updateUser(UpdateUserRequest request, Long userId);
     void deleteUser(Long userId);

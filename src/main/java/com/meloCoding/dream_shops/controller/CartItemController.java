@@ -18,6 +18,7 @@ import com.meloCoding.dream_shops.services.Cart.ICartItemService;
 import com.meloCoding.dream_shops.services.Cart.ICartService;
 import com.meloCoding.dream_shops.services.User.userService;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -35,13 +36,19 @@ public class CartItemController {
             @RequestParam Long productId,
             @RequestParam int quantity) {
         try {
-            User user = userService.getUserById(1L);
+            User user = userService.getAuthenticatedUser();
             Cart cart = cartService.initializeCart(user);
             cartItemService.addItemToCart(cart.getId(), productId, quantity);
             return ResponseEntity.ok(new ApiResponse("Add Item Success", null));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse(e.getMessage(), null));
+        } catch (JwtException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ApiResponse("Unauthorized", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse("Internal Server Error", null));
         }
     }
 

@@ -27,6 +27,7 @@ public class DataInitializer implements ApplicationListener<ApplicationReadyEven
     public void onApplicationEvent(ApplicationReadyEvent event) {
         createDefaultRoles();
         createDefaultUsers();
+        createDefaultAdmin();
     }
 
     private void createDefaultRoles() {
@@ -59,5 +60,24 @@ public class DataInitializer implements ApplicationListener<ApplicationReadyEven
         }
 
         System.out.println("5 default users created successfully.");
+    }
+
+    private void createDefaultAdmin() {
+        Role adminRole = roleRepository.findByName("ROLE_ADMIN")
+                .orElseThrow(() -> new RuntimeException("ROLE_ADMIN not found"));
+
+        if (userRepository.findByEmail("admin@example.com").isPresent()) {
+            return;
+        }
+
+        User admin = new User();
+        admin.setFirstName("Admin");
+        admin.setLastName("Admin");
+        admin.setEmail("admin@example.com");
+        admin.setPassword(passwordEncoder.encode("123456"));
+        admin.getRoles().add(adminRole);
+        userRepository.save(admin);
+
+        System.out.println("Default admin created successfully.");
     }
 }
