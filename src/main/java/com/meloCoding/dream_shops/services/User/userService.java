@@ -3,14 +3,17 @@ package com.meloCoding.dream_shops.services.User;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.meloCoding.dream_shops.dto.UserDto;
 import com.meloCoding.dream_shops.exceptions.AlreadyExistsException;
 import com.meloCoding.dream_shops.exceptions.ResourceNotFoundException;
+import com.meloCoding.dream_shops.models.Role;
 import com.meloCoding.dream_shops.models.User;
 import com.meloCoding.dream_shops.request.CreateUserRequest;
 import com.meloCoding.dream_shops.request.UpdateUserRequest;
+import com.meloCoding.dream_shops.services.repository.RoleRepository;
 import com.meloCoding.dream_shops.services.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,8 @@ import lombok.RequiredArgsConstructor;
 public class userService implements IUserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
     @Override
     public User getUserById(Long userId) {
@@ -36,7 +41,13 @@ public class userService implements IUserService {
                     user.setFirstName(req.getFirstName());
                     user.setLastName(req.getLastName());
                     user.setEmail(req.getEmail());
-                    user.setPassword(req.getPassword());
+                    user.setPassword(passwordEncoder.encode(req.getPassword()));
+
+                    // Assign default ROLE_USER
+                    Role userRole = roleRepository.findByName("ROLE_USER")
+                            .orElseThrow(() -> new RuntimeException("Default role not found!"));
+                    user.getRoles().add(userRole);
+
                     return userRepository.save(user);
                 })
                 .orElseThrow(() -> new AlreadyExistsException("Oops! " + request.getEmail() + " already exists!"));
